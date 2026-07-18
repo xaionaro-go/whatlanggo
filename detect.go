@@ -130,7 +130,12 @@ func detectLangInProfiles(text string, options Options, langProfileList langProf
 }
 
 func calculateConfidence(langDistances []langDistance, trigrams map[string]int) (Lang, float64) {
-	sort.SliceStable(langDistances, func(i, j int) bool { return langDistances[i].dist < langDistances[j].dist })
+	sort.Slice(langDistances, func(i, j int) bool {
+		if langDistances[i].dist != langDistances[j].dist {
+			return langDistances[i].dist < langDistances[j].dist
+		}
+		return langDistances[i].lang < langDistances[j].lang
+	})
 	langDist1 := langDistances[0]
 	langDist2 := langDistances[1]
 	score1 := maxTotalDistance - langDist1.dist
